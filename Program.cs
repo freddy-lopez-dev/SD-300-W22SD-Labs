@@ -2,7 +2,7 @@
 using System.Text;
 
 Product beans = new Product("Chocolate-covered Beans", 2, "A12");
-Product lays = new Product("Lays", 1, "002");
+Product lays = new Product("Lays", 1, "A13");
 
 VendingMachine myVendo = new VendingMachine(143);
 
@@ -13,11 +13,23 @@ myVendo.StockFloat(10, 10);
 myVendo.StockFloat(5, 10);
 myVendo.StockFloat(2, 10);
 myVendo.StockFloat(1, 10);
+List<int> myMoney = new List<int>() { 5, 1};
 
-Console.WriteLine(myVendo.SerialNumber);
+myVendo.VendItem("A12", myMoney);
+
+//Check money inside vendo
+Console.WriteLine("Money inside vending machine after vending");
 foreach(KeyValuePair<int, int> money in myVendo.MoneyFloat)
 {
     Console.WriteLine(money);
+}
+
+//Check inventory
+Console.WriteLine("Inventory inside vending machine after vending");
+foreach(KeyValuePair<Product, int> item in myVendo.Inventory)
+{
+    Console.Write($"{item.Key.Name} Qty: ");
+    Console.WriteLine(item.Value);
 }
 
 class VendingMachine
@@ -87,25 +99,59 @@ class VendingMachine
     public void VendItem(string code, List<int> userMoney)
     {
         int totalUserMoney = userMoney.Sum();
-
-        foreach(KeyValuePair<Product, int> product in Inventory)
+        int change = 0;
+        
+        if(totalUserMoney > 0)
         {
-            //check if user has money -- throw Error: insufficient money provided
-            //check if code exist -- throw Error, no item with code “E17”
-            //check if product has stock -- throw Error: Item is out of stock
-            //vend
-            if (product.Key.Code == code && totalUserMoney >= product.Key.Price)
+            for(int iteamIndex = 0; iteamIndex < Inventory.Count; iteamIndex++)
             {
-                //Vend
-            } 
-            if(product.Key.Code == code && product.Value <= 0)
-            {
-                // no stock
-            }
-            if(product.Key.Code != code)
-            {
-                // no item with code {code}
-            }
+                KeyValuePair<Product, int> item = Inventory.ElementAt(iteamIndex);
+            
+                if (item.Key.Code == code && item.Key.Price < totalUserMoney)
+                {
+
+                        change = totalUserMoney - item.Key.Price;
+                        // deduct the qty item
+                        Inventory[item.Key]--;
+                        // give some change
+                        Dictionary<int, int> userChange = new Dictionary<int, int>();
+                        for (int coinIndex = 0; coinIndex < MoneyFloat.Count; coinIndex++)
+                        {
+                            KeyValuePair<int, int> coin = MoneyFloat.ElementAt(coinIndex);
+
+                            //Check if there is enough qty for the given coin(coin.Key) in the vending machine.
+
+                            if (coin.Value > 0)
+                            {
+                                if (change > 0 && change >= coin.Key)
+                                {
+                                    change -= coin.Key;
+                                    coinIndex--;
+                                    MoneyFloat[coin.Key] = coin.Value - 1;
+                                    if (userChange.ContainsKey(coin.Key))
+                                    {
+                                        userChange[coin.Key]++;
+                                    }
+                                    else
+                                    {
+                                        userChange.Add(coin.Key, 1);
+                                    }
+                                }
+                            }
+
+                        }
+                        // print change
+                        Console.WriteLine("Your change is:");
+                        foreach (KeyValuePair<int, int> c in userChange)
+                        {
+                            Console.WriteLine(c);
+                        }
+                    }
+                }
+            
+        } else
+        {
+            Console.WriteLine("Insert some cash");
         }
     }
 }
