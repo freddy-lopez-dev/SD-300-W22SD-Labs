@@ -6,13 +6,13 @@ Product lays = new Product("Lays", 1, "A13");
 
 VendingMachine myVendo = new VendingMachine(143);
 
-myVendo.StockItem(beans, 10);
-myVendo.StockItem(lays, 10);
+Console.WriteLine(myVendo.StockItem(beans, 10));
+Console.WriteLine(myVendo.StockItem(lays, 10));
 myVendo.StockFloat(20, 10);
 myVendo.StockFloat(10, 10);
 myVendo.StockFloat(5, 10);
 myVendo.StockFloat(2, 10);
-myVendo.StockFloat(1, 10);
+Console.WriteLine($"Your bills are {myVendo.StockFloat(1, 10)}"); 
 List<int> myMoney = new List<int>() { 5, 1};
 
 myVendo.VendItem("A12", myMoney);
@@ -89,7 +89,9 @@ class VendingMachine
 
         foreach(KeyValuePair<int, int> money in MoneyFloat)
         {
+            
             informUser.Append(money.Key);
+            informUser.Append(' ');
         }
 
         return informUser.ToString();
@@ -103,9 +105,9 @@ class VendingMachine
         
         if(totalUserMoney > 0)
         {
-            for(int iteamIndex = 0; iteamIndex < Inventory.Count; iteamIndex++)
+            for(int itemIndex = 0; itemIndex < Inventory.Count; itemIndex++)
             {
-                KeyValuePair<Product, int> item = Inventory.ElementAt(iteamIndex);
+                KeyValuePair<Product, int> item = Inventory.ElementAt(itemIndex);
             
                 if (item.Key.Code == code && item.Key.Price < totalUserMoney)
                 {
