@@ -13,7 +13,7 @@ myVendo.StockFloat(10, 10);
 myVendo.StockFloat(5, 10);
 myVendo.StockFloat(2, 10);
 Console.WriteLine($"Your bills are {myVendo.StockFloat(1, 10)}"); 
-List<int> myMoney = new List<int>() { 5, 1};
+List<int> myMoney = new List<int>() { 1, 5};
 
 myVendo.VendItem("A12", myMoney);
 
@@ -148,7 +148,10 @@ class VendingMachine
                         {
                             Console.WriteLine(c);
                         }
-                    }
+                    } else
+                {
+                    Console.WriteLine("Invalid code or insufficient fund");
+                }
                 }
             
         } else
