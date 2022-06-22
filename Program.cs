@@ -1,7 +1,10 @@
 ﻿
 using System.Text;
 
-Product beans = new Product("", 2, "A12");
+Product beans = new Product("beans", 2, "A12");
+VendingMachine myVendo = new VendingMachine("11");
+
+myVendo.StockItem(beans, -1);
 
 
 class VendingMachine
@@ -13,27 +16,60 @@ class VendingMachine
 
     public VendingMachine(string barcode)
     {
-        SerialNumber++;
-        BarCode = barcode;
-        MoneyFloat = new Dictionary<int, int>();
-        Inventory = new Dictionary<Product, int>();
-    }
-
-    public string StockItem(Product product, int quantity)
-    {
-        string informStock;
-
-        if (Inventory.ContainsKey(product))
+        try
         {
-            quantity++;
-            informStock = $"Product {product.Name} with code {product.Code} and price of {product.Price} new quantity is {quantity}";
-        } else
+            SerialNumber++;
+            BarCode = CheckBarcode(barcode);
+            MoneyFloat = new Dictionary<int, int>();
+            Inventory = new Dictionary<Product, int>();
+        } catch(Exception ex)
         {
-            Inventory.Add(product, quantity);
-            informStock = $"Product {product.Name} with code {product.Code} and price of {product.Price} has been added";
+            Console.WriteLine(ex.Message);
         }
 
-        return informStock;
+    }
+
+    public string CheckBarcode(string code)
+    {
+        if(!string.IsNullOrEmpty(code))
+        {
+            return code;
+        }
+
+        throw new Exception("Invalid Bar Code");
+    }
+
+    public int CheckQTY(int qty)
+    {
+        if(qty > 0)
+        {
+            return qty;
+        }
+
+        throw new Exception("Not a valid QTY");
+    }
+
+    public void StockItem(Product product, int quantity)
+    {
+
+        try
+        {
+            int prodQty = CheckQTY(quantity);
+            if (Inventory.ContainsKey(product))
+            {
+                prodQty++;
+                Console.WriteLine($"Product {product.Name} with code {product.Code} and price of {product.Price} new quantity is {quantity}");
+            }
+            else
+            {
+                Inventory.Add(product, prodQty);
+                Console.WriteLine($"Product {product.Name} with code {product.Code} and price of {product.Price} has been added");
+            }
+        } catch(Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+
     }
 
     public string StockFloat(int moneyDenomination, int quantity)
@@ -137,7 +173,6 @@ class Product
         {
             Console.WriteLine(ex.Message);
         }
-
     }
 
     public string CheckString(string value)
@@ -146,7 +181,6 @@ class Product
         {
             return value;
         }
-
         throw new Exception("Not a valid name");
     }
 
@@ -156,7 +190,6 @@ class Product
         {
             return price;
         }
-
         throw new Exception("Not a valid price");
     }
 }
