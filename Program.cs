@@ -4,7 +4,9 @@ using System.Text;
 Product beans = new Product("beans", 2, "A12");
 VendingMachine myVendo = new VendingMachine("11");
 
-myVendo.StockItem(beans, -1);
+myVendo.StockItem(beans, -2);
+myVendo.VendItem("A12", new List<int>() { 5, -1 });
+myVendo.VendItem("", new List<int>() { 5, 1 });
 
 
 class VendingMachine
@@ -36,10 +38,10 @@ class VendingMachine
             return code;
         }
 
-        throw new Exception("Invalid Bar Code");
+        throw new Exception("Invalid Code");
     }
 
-    public int CheckQTY(int qty)
+    public int CheckInt(int qty)
     {
         if(qty > 0)
         {
@@ -54,7 +56,7 @@ class VendingMachine
 
         try
         {
-            int prodQty = CheckQTY(quantity);
+            int prodQty = CheckInt(quantity);
             if (Inventory.ContainsKey(product))
             {
                 prodQty++;
@@ -93,19 +95,40 @@ class VendingMachine
         
     }
 
+    public List<int> CheckUserMoney(List<int> moneyList)
+    {
+        List<int> checkedMoney = new List<int>();
+        foreach(int money in moneyList)
+        {
+            if(money > 0)
+            {
+                checkedMoney.Add(money);
+            } else
+            {
+                throw new Exception("Invalid Cash");
+            }
+        }
+
+        return checkedMoney;
+    }
+
     public void VendItem(string code, List<int> userMoney)
     {
-        int totalUserMoney = userMoney.Sum();
-        int change = 0;
-        
-        if(totalUserMoney > 0)
+        try
         {
-            for(int itemIndex = 0; itemIndex < Inventory.Count; itemIndex++)
+            List<int> checkedMoney = CheckUserMoney(userMoney);
+            string checkedCode = CheckBarcode(code);
+            int totalUserMoney = checkedMoney.Sum();
+            int change = 0;
+
+            if (totalUserMoney > 0)
             {
-                KeyValuePair<Product, int> item = Inventory.ElementAt(itemIndex);
-            
-                if (item.Key.Code == code && item.Key.Price < totalUserMoney)
+                for (int itemIndex = 0; itemIndex < Inventory.Count; itemIndex++)
                 {
+                    KeyValuePair<Product, int> item = Inventory.ElementAt(itemIndex);
+
+                    if (item.Key.Code == checkedCode && item.Key.Price < totalUserMoney)
+                    {
 
                         change = totalUserMoney - item.Key.Price;
                         // deduct the qty item
@@ -143,15 +166,23 @@ class VendingMachine
                         {
                             Console.WriteLine(c);
                         }
-                    } else
-                {
-                    Console.WriteLine("Invalid code or insufficient fund");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid code or insufficient fund");
+                    }
                 }
-                }
-            
-        } else
+
+            }
+            else
+            {
+                Console.WriteLine("Insert some cash");
+            }
+
+        }
+        catch(Exception ex)
         {
-            Console.WriteLine("Insert some cash");
+            Console.WriteLine(ex.Message);
         }
     }
 }
