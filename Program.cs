@@ -4,7 +4,7 @@ using System.Text;
 Product beans = new Product("Chocolate-covered Beans", 2, "A12");
 Product lays = new Product("Lays", 1, "A13");
 
-VendingMachine myVendo = new VendingMachine(143);
+VendingMachine myVendo = new VendingMachine("00212");
 
 Console.WriteLine(myVendo.StockItem(beans, 10));
 Console.WriteLine(myVendo.StockItem(lays, 10));
@@ -16,46 +16,20 @@ Console.WriteLine($"Your bills are {myVendo.StockFloat(1, 10)}");
 List<int> myMoney = new List<int>() { 1, 5};
 
 myVendo.VendItem("A12", myMoney);
-
-//Check money inside vendo
-Console.WriteLine("Money inside vending machine after vending");
-foreach(KeyValuePair<int, int> money in myVendo.MoneyFloat)
-{
-    Console.WriteLine(money);
-}
-
-//Check inventory
-Console.WriteLine("Inventory inside vending machine after vending");
-foreach(KeyValuePair<Product, int> item in myVendo.Inventory)
-{
-    Console.Write($"{item.Key.Name} Qty: ");
-    Console.WriteLine(item.Value);
-}
+VendingMachine myVendo2 = new VendingMachine("00213");
+Console.WriteLine(VendingMachine.SerialNumber);
 
 class VendingMachine
 {
-    public int SerialNumber { get; set; }
-    public Dictionary<int, int> MoneyFloat { get; set; }
-    public Dictionary<Product, int> Inventory { get; set; }
+    public string BarCode { get; }
+    public static int SerialNumber { get; set; } = 0;
+    private Dictionary<int, int> MoneyFloat { get; set; }
+    private Dictionary<Product, int> Inventory { get; set; }
 
-    public VendingMachine()
+    public VendingMachine(string barcode)
     {
-        MoneyFloat = new Dictionary<int, int>();
-        Inventory = new Dictionary<Product, int>();
-    }
-
-    public VendingMachine(int srlno)
-    {
-        SerialNumber = srlno;
-        MoneyFloat = new Dictionary<int, int>();
-        Inventory = new Dictionary<Product, int>();
-    }
-
-    public VendingMachine(int serialNumber, Dictionary<int, int> moneyFloat, Dictionary<Product, int> inventory)
-    {
-        SerialNumber = serialNumber;
-        MoneyFloat = moneyFloat;
-        Inventory = inventory;
+        SerialNumber++;
+        BarCode = barcode;
         MoneyFloat = new Dictionary<int, int>();
         Inventory = new Dictionary<Product, int>();
     }
