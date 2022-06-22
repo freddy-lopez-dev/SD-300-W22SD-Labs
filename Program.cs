@@ -1,23 +1,8 @@
 ﻿
 using System.Text;
 
-Product beans = new Product("Chocolate-covered Beans", 2, "A12");
-Product lays = new Product("Lays", 1, "A13");
+Product beans = new Product("", 2, "A12");
 
-VendingMachine myVendo = new VendingMachine("00212");
-
-Console.WriteLine(myVendo.StockItem(beans, 10));
-Console.WriteLine(myVendo.StockItem(lays, 10));
-myVendo.StockFloat(20, 10);
-myVendo.StockFloat(10, 10);
-myVendo.StockFloat(5, 10);
-myVendo.StockFloat(2, 10);
-Console.WriteLine($"Your bills are {myVendo.StockFloat(1, 10)}"); 
-List<int> myMoney = new List<int>() { 1, 5};
-
-myVendo.VendItem("A12", myMoney);
-VendingMachine myVendo2 = new VendingMachine("00213");
-Console.WriteLine(VendingMachine.SerialNumber);
 
 class VendingMachine
 {
@@ -143,9 +128,36 @@ class Product
 
     public Product(string name, int price, string code)
     {
-        Name = name;
-        Price = price;
-        Code = code;
+        try
+        {
+            Name = CheckString(name);
+            Price = CheckPrice(price);
+            Code = CheckString(code);
+        } catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+
+    }
+
+    public string CheckString(string value)
+    {
+        if(!string.IsNullOrEmpty(value))
+        {
+            return value;
+        }
+
+        throw new Exception("Not a valid name");
+    }
+
+    public int CheckPrice(int price)
+    {
+        if(price > 0)
+        {
+            return price;
+        }
+
+        throw new Exception("Not a valid price");
     }
 }
 
