@@ -130,7 +130,7 @@ class Reservation
     public Client Client { get; set; }
     public Room Room { get; set; }
     public int Occupants { get; set; }
-    public bool IsCurrent { get; set; }
+    public bool IsCurrent { get; set; } = true;
     public DateTime DateTime = new DateTime();
 
     public Reservation(Client client, Room room)
